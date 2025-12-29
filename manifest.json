@@ -1,16 +1,16 @@
 {
   "name": "專屬健身 App",
   "short_name": "健身日誌",
-  "start_url": "./index.html",
+  "start_url": "/-/",
   "display": "standalone",
   "background_color": "#121212",
   "theme_color": "#bb86fc",
   "icons": [
     {
       "src": "https://r.jina.ai/i/6ef22e43e2f74da386b11028303d85d7",
-      "sizes": "512x512",
+      "sizes": "1024x1024",
       "type": "image/png",
-      "purpose": "any"
+      "purpose": "any maskable"
     }
   ]
 }
