@@ -11,8 +11,8 @@
     
     <link rel="manifest" href="manifest.json">
     
-    <link rel="apple-touch-icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MTIgNTEyIj48cmVjdCB3aWR0aD0iNTEyIiBoZWlnaHQ9IjUxMiIgZmlsbD0iIzEyMTIxMiIvPjxjaXJjbGUgY3g9IjI1NiIgY3k9IjI1NiIgcj0iMjMwIiBmaWxsPSIjRkZENzAwIi8+PHBhdGggZD0iTTE0MCAxNzBoNjB2MTcyaC02MGEzMCAzMCAwIDAgMS0zMC0zMHYtMTEyYTMwIDMwIDAgMCAxIDMwLTMwek0zMTIgMTcwaDYwYTMwIDMwIDAgMCAxIDMwIDMwdjExMmEzMCAzMCAwIDAgMS0zMCAzMGgtNjB2LTE3MnpNMjAwIDIzNmgxMTJ2NDBoLTExMnoiIGZpbGw9IiMxMjEyMTIiLz48L3N2Zz4=">
-    <link rel="icon" type="image/png" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MTIgNTEyIj48cmVjdCB3aWR0aD0iNTEyIiBoZWlnaHQ9IjUxMiIgZmlsbD0iIzEyMTIxMiIvPjxjaXJjbGUgY3g9IjI1NiIgY3k9IjI1NiIgcj0iMjMwIiBmaWxsPSIjRkZENzAwIi8+PHBhdGggZD0iTTE0MCAxNzBoNjB2MTcyaC02MGEzMCAzMCAwIDAgMS0zMC0zMHYtMTEyYTMwIDMwIDAgMCAxIDMwLTMwek0zMTIgMTcwaDYwYTMwIDMwIDAgMCAxIDMwIDMwdjExMmEzMCAzMCAwIDAgMS0zMCAzMGgtNjB2LTE3MnpNMjAwIDIzNmgxMTJ2NDBoLTExMnoiIGZpbGw9IiMxMjEyMTIiLz48L3N2Zz4=">
+    <link rel="apple-touch-icon" href="icon.svg">
+    <link rel="icon" type="image/svg+xml" href="icon.svg">
 
     <title>💪 專屬健身 App</title>
     <style>
@@ -57,7 +57,7 @@
             background: none; border: none; font-size: 18px; cursor: pointer; padding: 8px; 
         }
 
-        /* --- 客製化彈窗樣式 (為了去除網址文字) --- */
+        /* --- 客製化彈窗 (去除網址文字) --- */
         .modal-overlay {
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(3px);
@@ -113,8 +113,8 @@
     </div>
 
     <script>
-        let deleteIndex = null; // 暫存要刪除的索引
-        let isClearAll = false; // 判斷是否為「清空全部」
+        let deleteIndex = null;
+        let isClearAll = false;
 
         window.onload = display;
 
@@ -158,7 +158,6 @@
             `).join('');
         }
 
-        // --- 彈窗邏輯 ---
         const modal = document.getElementById('customModal');
         const modalText = document.getElementById('modalText');
         const confirmBtn = document.getElementById('confirmBtn');
