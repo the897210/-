@@ -7,62 +7,33 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-title" content="我的健身App">
-
+    
     <link rel="manifest" href="manifest.json">
+    
+    <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/2906/2906496.png">
+    <link rel="icon" type="image/png" href="https://cdn-icons-png.flaticon.com/512/2906/2906496.png">
     <meta name="theme-color" content="#bb86fc">
-    <link rel="apple-touch-icon" href="https://r.jina.ai/i/6ef22e43e2f74da386b11028303d85d7">
-    <link rel="icon" type="image/png" href="https://r.jina.ai/i/6ef22e43e2f74da386b11028303d85d7">
 
     <title>💪 專屬健身 App</title>
     <style>
-        :root {
-            --bg-color: #121212;
-            --card-bg: #1e1e1e;
-            --primary: #03dac6;
-            --secondary: #bb86fc;
-            --text: #ffffff;
-        }
+        :root { --bg-color: #121212; --card-bg: #1e1e1e; --primary: #03dac6; --secondary: #bb86fc; --text: #ffffff; }
         body { 
             font-family: -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
             padding: env(safe-area-inset-top) 20px 40px 20px; 
-            background: var(--bg-color); 
-            color: var(--text); 
-            margin: 0;
-            overflow-x: hidden;
-            -webkit-tap-highlight-color: transparent;
+            background: var(--bg-color); color: var(--text); margin: 0; overflow-x: hidden; -webkit-tap-highlight-color: transparent;
         }
-        .card { 
-            background: var(--card-bg); 
-            padding: 20px; 
-            border-radius: 24px; 
-            margin-bottom: 20px; 
-            border: 1px solid #333;
-            box-shadow: 0 8px 16px rgba(0,0,0,0.3);
-        }
+        .card { background: var(--card-bg); padding: 20px; border-radius: 24px; margin-bottom: 20px; border: 1px solid #333; box-shadow: 0 8px 16px rgba(0,0,0,0.3); }
         h2 { text-align: center; color: var(--secondary); margin: 25px 0; font-size: 28px; }
         h3 { margin-top: 0; font-size: 18px; color: #eee; }
-        input { 
-            width: 100%; padding: 16px; margin: 10px 0; 
-            border: none; border-radius: 14px; background: #2c2c2c; 
-            color: white; font-size: 16px; box-sizing: border-box;
-            outline: none; transition: 0.3s;
-        }
+        input { width: 100%; padding: 16px; margin: 10px 0; border: none; border-radius: 14px; background: #2c2c2c; color: white; font-size: 16px; box-sizing: border-box; outline: none; transition: 0.3s; }
         input:focus { background: #383838; box-shadow: 0 0 0 2px var(--secondary); }
-        button { 
-            background: var(--primary); color: #000; border: none; padding: 16px; 
-            border-radius: 14px; width: 100%; font-size: 17px; font-weight: bold; margin-top: 12px;
-            box-shadow: 0 4px 10px rgba(3, 218, 198, 0.3);
-        }
+        button { background: var(--primary); color: #000; border: none; padding: 16px; border-radius: 14px; width: 100%; font-size: 17px; font-weight: bold; margin-top: 12px; box-shadow: 0 4px 10px rgba(3, 218, 198, 0.3); }
         button:active { transform: scale(0.98); opacity: 0.9; }
-        .log-item { 
-            background: #2c2c2c; padding: 14px; border-radius: 12px; 
-            margin-bottom: 10px; font-size: 14px; border-left: 5px solid var(--secondary);
-            display: flex; justify-content: space-between; align-items: center;
-        }
+        .log-item { background: #2c2c2c; padding: 14px; border-radius: 12px; margin-bottom: 10px; font-size: 14px; border-left: 5px solid var(--secondary); display: flex; justify-content: space-between; align-items: center; }
         #history { max-height: 350px; overflow-y: auto; margin-top: 15px; }
-        ::-webkit-scrollbar { width: 0px; }
-        .delete-btn { color: #ff5252; background: none; box-shadow: none; width: auto; padding: 5px; margin: 0; font-size: 12px; }
+        
+        /* 針對三星瀏覽器特別隱藏網址列的 Hack */
+        @media all and (display-mode: standalone) { body { padding-top: 40px; } }
     </style>
 </head>
 <body>
@@ -91,53 +62,30 @@
 
     <script>
         window.onload = displayHistory;
-
         function saveData(type) {
             let record = "";
             const now = new Date();
             const timeStr = `${now.getMonth()+1}/${now.getDate()} ${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
-            
             if (type === 'weight') {
-                const ex = document.getElementById('exercise').value;
-                const w = document.getElementById('weight').value;
-                const r = document.getElementById('reps').value;
+                const ex = document.getElementById('exercise').value; const w = document.getElementById('weight').value; const r = document.getElementById('reps').value;
                 if(!ex || !w) return alert("請輸入完整內容！");
                 record = `[${timeStr}] ${ex}: ${w}kg x ${r}下`;
             } else {
-                const c = document.getElementById('cardio').value;
-                const m = document.getElementById('minutes').value;
+                const c = document.getElementById('cardio').value; const m = document.getElementById('minutes').value;
                 if(!c || !m) return alert("請輸入完整內容！");
                 record = `[${timeStr}] ${c}: ${m}分鐘`;
             }
-
-            let history = JSON.parse(localStorage.getItem('workout_logs') || "[]");
-            history.unshift(record);
-            localStorage.setItem('workout_logs', JSON.stringify(history));
-            
-            displayHistory();
+            let history = JSON.parse(localStorage.getItem('workout_logs') || "[]"); history.unshift(record);
+            localStorage.setItem('workout_logs', JSON.stringify(history)); displayHistory();
             document.querySelectorAll('input').forEach(i => i.value = ''); 
         }
-
         function displayHistory() {
             const history = JSON.parse(localStorage.getItem('workout_logs') || "[]");
             const container = document.getElementById('history');
-            if (history.length === 0) {
-                container.innerHTML = '<div style="color:#888; text-align:center; padding: 20px;">目前尚無紀錄</div>';
-                return;
-            }
-            container.innerHTML = history.map((item, index) => `
-                <div class="log-item">
-                    <span>${item}</span>
-                </div>
-            `).join('');
+            if (history.length === 0) { container.innerHTML = '<div style="color:#888; text-align:center; padding: 20px;">目前尚無紀錄</div>'; return; }
+            container.innerHTML = history.map(item => `<div class="log-item"><span>${item}</span></div>`).join('');
         }
-
-        function clearHistory() {
-            if(confirm("確定要刪除所有紀錄嗎？此動作無法復原。")) {
-                localStorage.removeItem('workout_logs');
-                displayHistory();
-            }
-        }
+        function clearHistory() { if(confirm("確定要刪除所有紀錄嗎？")) { localStorage.removeItem('workout_logs'); displayHistory(); } }
     </script>
 </body>
 </html>
