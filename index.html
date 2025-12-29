@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>我的運動紀錄 App</title>
+    <style>
+        body { font-family: -apple-system, sans-serif; padding: 20px; background: #f4f7f6; color: #333; }
+        .card { background: white; padding: 20px; border-radius: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 20px; }
+        h2 { text-align: center; color: #2c3e50; }
+        input { width: 100%; padding: 12px; margin: 8px 0; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; font-size: 16px; }
+        button { background: #4CAF50; color: white; border: none; padding: 12px; border-radius: 8px; width: 100%; font-size: 16px; font-weight: bold; margin-top: 10px; }
+        button.cardio { background: #2196F3; }
+        .log-item { background: #fff; padding: 10px; border-bottom: 1px solid #eee; font-size: 14px; }
+        #history { max-height: 300px; overflow-y: auto; margin-top: 10px; }
+    </style>
+</head>
+<body>
+    <h2>💪 我的專屬健身房</h2>
+    <div class="card">
+        <h3>🏋️ 重訓紀錄</h3>
+        <input type="text" id="exercise" placeholder="動作 (如: 深蹲)">
+        <input type="number" id="weight" placeholder="重量 (kg)">
+        <input type="number" id="reps" placeholder="次數">
+        <button onclick="saveData('weight')">儲存重訓</button>
+    </div>
+    <div class="card">
+        <h3>🏃 有氧/設定</h3>
+        <input type="text" id="cardio" placeholder="類型 (如: 跑步)">
+        <input type="number" id="minutes" placeholder="時間 (分鐘)">
+        <button class="cardio" onclick="saveData('cardio')">儲存有氧</button>
+    </div>
+    <div class="card">
+        <h3>📅 歷史紀錄</h3>
+        <div id="history"></div>
+        <button style="background:#ff5252; font-size: 12px;" onclick="clearHistory()">清空紀錄</button>
+    </div>
+    <script>
+        window.onload = displayHistory;
+        function saveData(type) {
+            let record = "";
+            const date = new Date().toLocaleDateString();
+            if (type === 'weight') {
+                const ex = document.getElementById('exercise').value;
+                const w = document.getElementById('weight').value;
+                const r = document.getElementById('reps').value;
+                if(!ex || !w) return alert("請輸入內容");
+                record = `${date} - ${ex}: ${w}kg x ${r}下`;
+            } else {
+                const c = document.getElementById('cardio').value;
+                const m = document.getElementById('minutes').value;
+                if(!c || !m) return alert("請輸入內容");
+                record = `${date} - ${c}: ${m}分鐘`;
+            }
+            let history = JSON.parse(localStorage.getItem('workout_logs') || "[]");
+            history.unshift(record);
+            localStorage.setItem('workout_logs', JSON.stringify(history));
+            displayHistory();
+            alert("已成功儲存！");
+        }
+        function displayHistory() {
+            const history = JSON.parse(localStorage.getItem('workout_logs') || "[]");
+            const container = document.getElementById('history');
+            container.innerHTML = history.map(item => `<div class="log-item">${item}</div>`).join('');
+        }
+        function clearHistory() {
+            if(confirm("確定要刪除所有紀錄嗎？")) {
+                localStorage.removeItem('workout_logs');
+                displayHistory();
+            }
+        }
+    </script>
+</body>
+</html>
