@@ -7,7 +7,7 @@
   "theme_color": "#bb86fc",
   "icons": [
     {
-      "src": "https://r.jina.ai/i/6ef22e43e2f74da386b11028303d85d7",
+      "src": "icon.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"
