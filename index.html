@@ -17,11 +17,7 @@
     <title>💪 專屬健身 App</title>
     <style>
         :root { --bg-color: #121212; --card-bg: #1e1e1e; --primary: #03dac6; --secondary: #bb86fc; --text: #ffffff; }
-        body { 
-            font-family: -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
-            padding: env(safe-area-inset-top) 20px 40px 20px; 
-            background: var(--bg-color); color: var(--text); margin: 0; overflow-x: hidden; -webkit-tap-highlight-color: transparent;
-        }
+        body { font-family: -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; padding: env(safe-area-inset-top) 20px 40px 20px; background: var(--bg-color); color: var(--text); margin: 0; overflow-x: hidden; -webkit-tap-highlight-color: transparent; }
         .card { background: var(--card-bg); padding: 20px; border-radius: 24px; margin-bottom: 20px; border: 1px solid #333; box-shadow: 0 8px 16px rgba(0,0,0,0.3); }
         h2 { text-align: center; color: var(--secondary); margin: 25px 0; font-size: 28px; }
         h3 { margin-top: 0; font-size: 18px; color: #eee; }
@@ -31,9 +27,6 @@
         button:active { transform: scale(0.98); opacity: 0.9; }
         .log-item { background: #2c2c2c; padding: 14px; border-radius: 12px; margin-bottom: 10px; font-size: 14px; border-left: 5px solid var(--secondary); display: flex; justify-content: space-between; align-items: center; }
         #history { max-height: 350px; overflow-y: auto; margin-top: 15px; }
-        
-        /* 針對三星瀏覽器特別隱藏網址列的 Hack */
-        @media all and (display-mode: standalone) { body { padding-top: 40px; } }
     </style>
 </head>
 <body>
@@ -44,20 +37,20 @@
         <input type="text" id="exercise" placeholder="動作名稱 (如：深蹲)">
         <input type="number" id="weight" placeholder="重量 (kg)">
         <input type="number" id="reps" placeholder="次數">
-        <button onclick="saveData('weight')">儲存本次訓練</button>
+        <button onclick="saveData('weight')">儲存紀錄</button>
     </div>
 
     <div class="card">
-        <h3>🏃 有氧 / 其他設定</h3>
+        <h3>🏃 有氧 / 設定</h3>
         <input type="text" id="cardio" placeholder="類型 (如：跑步)">
         <input type="number" id="minutes" placeholder="時間 (分鐘)">
-        <button style="background: var(--secondary);" onclick="saveData('cardio')">儲存有氧紀錄</button>
+        <button style="background: var(--secondary);" onclick="saveData('cardio')">儲存有氧</button>
     </div>
 
     <div class="card">
-        <h3>📅 訓練歷史紀錄</h3>
+        <h3>📅 歷史紀錄</h3>
         <div id="history"></div>
-        <button style="background:none; color:#ff5252; font-size:13px; margin-top: 25px; border: 1px solid #444;" onclick="clearHistory()">清空所有歷史數據</button>
+        <button style="background:none; color:#ff5252; font-size:13px; margin-top: 25px; border: 1px solid #444;" onclick="clearHistory()">清空所有數據</button>
     </div>
 
     <script>
@@ -85,7 +78,7 @@
             if (history.length === 0) { container.innerHTML = '<div style="color:#888; text-align:center; padding: 20px;">目前尚無紀錄</div>'; return; }
             container.innerHTML = history.map(item => `<div class="log-item"><span>${item}</span></div>`).join('');
         }
-        function clearHistory() { if(confirm("確定要刪除所有紀錄嗎？")) { localStorage.removeItem('workout_logs'); displayHistory(); } }
+        function clearHistory() { if(confirm("確定刪除？")) { localStorage.removeItem('workout_logs'); displayHistory(); } }
     </script>
 </body>
 </html>
