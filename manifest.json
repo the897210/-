@@ -1,5 +1,5 @@
 {
-  "name": "專屬健身 App",
+  "name": "我的專屬健身App",
   "short_name": "健身日誌",
   "start_url": "/-/",
   "display": "standalone",
@@ -8,7 +8,7 @@
   "icons": [
     {
       "src": "https://r.jina.ai/i/6ef22e43e2f74da386b11028303d85d7",
-      "sizes": "1024x1024",
+      "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"
     }
