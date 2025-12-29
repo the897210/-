@@ -7,9 +7,9 @@
   "theme_color": "#bb86fc",
   "icons": [
     {
-      "src": "https://cdn-icons-png.flaticon.com/512/2906/2906496.png",
+      "src": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MTIgNTEyIj48cmVjdCB3aWR0aD0iNTEyIiBoZWlnaHQ9IjUxMiIgZmlsbD0iIzEyMTIxMiIvPjxjaXJjbGUgY3g9IjI1NiIgY3k9IjI1NiIgcj0iMjMwIiBmaWxsPSIjRkZENzAwIi8+PHBhdGggZD0iTTE0MCAxNzBoNjB2MTcyaC02MGEzMCAzMCAwIDAgMS0zMC0zMHYtMTEyYTMwIDMwIDAgMCAxIDMwLTMwek0zMTIgMTcwaDYwYTMwIDMwIDAgMCAxIDMwIDMwdjExMmEzMCAzMCAwIDAgMS0zMCAzMGgtNjB2LTE3MnpNMjAwIDIzNmgxMTJ2NDBoLTExMnoiIGZpbGw9IiMxMjEyMTIiLz48L3N2Zz4=",
       "sizes": "512x512",
-      "type": "image/png",
+      "type": "image/svg+xml",
       "purpose": "any maskable"
     }
   ]
