@@ -140,4 +140,247 @@
         <button class="btn-save" style="background:var(--sec);" onclick="saveData('cardio')">儲存有氧</button>
     </div>
 
-    <button onclick="clearAllData()" style="background:none; color:var(--danger); border:1px solid #444; margin-bottom:3
+    <button onclick="clearAllData()" style="background:none; color:var(--danger); border:1px solid #444; margin-bottom:30px;">⚠️ 清空所有資料</button>
+
+    <div id="deleteModal" class="modal">
+        <div class="modal-content">
+            <div style="font-size:18px; font-weight:bold; color:#fff; margin-bottom:10px;">確定刪除？</div>
+            <div style="font-size:14px; color:#aaa;">這筆紀錄將無法復原</div>
+            <div class="modal-btns">
+                <button class="btn-save" style="background:#444; color:#fff;" onclick="closeModal()">取消</button>
+                <button class="btn-save" style="background:var(--danger); color:#fff;" onclick="confirmDelete()">刪除</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let logs = JSON.parse(localStorage.getItem('workout_logs') || "[]");
+        let timerInterval;
+        let timeLeft = 60;
+        let isTimerRunning = false;
+        let currentYear, currentMonth;
+        let selectedDateStr = null; // 當前選中的日期 (格式: YYYY/MM/DD)
+        let deleteTargetIndex = null; // 要刪除的 index
+
+        // 初始化
+        window.onload = function() {
+            const now = new Date();
+            currentYear = now.getFullYear();
+            currentMonth = now.getMonth();
+            // 預設選中今天
+            selectedDateStr = `${currentYear}/${(currentMonth+1).toString().padStart(2,'0')}/${now.getDate().toString().padStart(2,'0')}`;
+            
+            renderCalendar();
+            renderLogs();
+        };
+
+        // --- 1. 儲存功能 (升級版) ---
+        function saveData(type) {
+            const now = new Date();
+            const dateStr = `${now.getFullYear()}/${(now.getMonth()+1).toString().padStart(2,'0')}/${now.getDate().toString().padStart(2,'0')}`;
+            const timeStr = `${now.getHours().toString().padStart(2,'0')}:${now.getMinutes().toString().padStart(2,'0')}`;
+            let content = "";
+
+            if (type === 'weight') {
+                const ex = document.getElementById('exercise').value.trim();
+                const w = document.getElementById('weight').value;
+                const r = document.getElementById('reps').value;
+                const s = document.getElementById('sets').value || "1"; // 預設1組
+                if(!ex || !w || !r) return alert("請輸入完整內容！");
+                // 格式：[日期 時間] 動作: 重量kg x 次數 x 組數
+                content = `[${dateStr} ${timeStr}] ${ex}: ${w}kg x ${r}次 x ${s}組`;
+            } else {
+                const c = document.getElementById('cardio').value.trim();
+                const m = document.getElementById('minutes').value;
+                if(!c || !m) return alert("請輸入完整內容！");
+                content = `[${dateStr} ${timeStr}] ${c}: ${m}分鐘`;
+            }
+
+            logs.unshift(content);
+            localStorage.setItem('workout_logs', JSON.stringify(logs));
+            
+            // 儲存後更新介面
+            selectedDateStr = dateStr; // 自動跳轉到今天
+            renderCalendar();
+            renderLogs();
+            document.querySelectorAll('input').forEach(i => i.value = '');
+            document.getElementById('lastRecord').innerHTML = ''; // 清空提示
+        }
+
+        // --- 2. 歷史提示功能 ---
+        function checkHistory() {
+            const inputVal = document.getElementById('exercise').value.trim();
+            const hintBox = document.getElementById('lastRecord');
+            if (!inputVal) { hintBox.innerHTML = ""; return; }
+
+            // 搜尋包含此動作名稱的最新一筆紀錄
+            const found = logs.find(log => log.includes(inputVal) && log.includes('kg'));
+            
+            if (found) {
+                // 嘗試擷取 : 後面的內容
+                const details = found.split(']:')[1] || found.split(']')[1]; 
+                hintBox.innerHTML = `上次紀錄: <span>${details}</span>`;
+            } else {
+                hintBox.innerHTML = "尚未有此動作紀錄";
+            }
+        }
+
+        // --- 3. 計時器功能 ---
+        function toggleTimer() {
+            const btn = document.querySelector('.btn-timer');
+            if (isTimerRunning) {
+                clearInterval(timerInterval);
+                isTimerRunning = false;
+                btn.innerText = "繼續";
+                btn.classList.remove('timer-active');
+            } else {
+                if (timeLeft <= 0) timeLeft = 60;
+                isTimerRunning = true;
+                btn.innerText = "暫停";
+                btn.classList.add('timer-active');
+                timerInterval = setInterval(() => {
+                    timeLeft--;
+                    document.getElementById('timerDisplay').innerText = timeLeft;
+                    if (timeLeft <= 0) {
+                        clearInterval(timerInterval);
+                        isTimerRunning = false;
+                        btn.innerText = "完成";
+                        btn.classList.remove('timer-active');
+                        // 可選：播放音效或震動 navigator.vibrate(200);
+                    }
+                }, 1000);
+            }
+        }
+
+        function resetTimer() {
+            clearInterval(timerInterval);
+            isTimerRunning = false;
+            timeLeft = 60;
+            document.getElementById('timerDisplay').innerText = 60;
+            document.querySelector('.btn-timer').innerText = "開始";
+            document.querySelector('.btn-timer').classList.remove('timer-active');
+        }
+
+        // --- 4. 月曆系統 (核心) ---
+        function changeMonth(delta) {
+            currentMonth += delta;
+            if (currentMonth > 11) { currentMonth = 0; currentYear++; }
+            else if (currentMonth < 0) { currentMonth = 11; currentYear--; }
+            renderCalendar();
+        }
+
+        function renderCalendar() {
+            const firstDay = new Date(currentYear, currentMonth, 1).getDay(); // 當月1號星期幾
+            const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate(); // 當月幾天
+            const container = document.getElementById('calendar');
+            const label = document.getElementById('monthLabel');
+            
+            label.innerText = `${currentYear}年 ${currentMonth + 1}月`;
+            container.innerHTML = '';
+
+            // 星期標頭
+            const weekDays = ['日', '一', '二', '三', '四', '五', '六'];
+            weekDays.forEach(d => container.innerHTML += `<div class="day-name">${d}</div>`);
+
+            // 空白補位
+            for (let i = 0; i < firstDay; i++) {
+                container.innerHTML += `<div></div>`;
+            }
+
+            // 產生日期
+            for (let d = 1; d <= daysInMonth; d++) {
+                const dateStr = `${currentYear}/${(currentMonth+1).toString().padStart(2,'0')}/${d.toString().padStart(2,'0')}`;
+                
+                // 檢查這天有沒有運動紀錄 (透過字串比對)
+                const hasData = logs.some(log => log.includes(`[${dateStr}`));
+                const isSelected = (dateStr === selectedDateStr);
+                const isToday = (new Date().toDateString() === new Date(currentYear, currentMonth, d).toDateString());
+
+                let className = 'day';
+                if (isToday) className += ' today';
+                if (hasData) className += ' has-data';
+                if (isSelected) className += ' selected';
+
+                container.innerHTML += `<div class="${className}" onclick="selectDate('${dateStr}')">${d}</div>`;
+            }
+        }
+
+        function selectDate(dateStr) {
+            selectedDateStr = dateStr;
+            renderCalendar(); // 重繪以顯示選取狀態
+            renderLogs(); // 過濾當天紀錄
+        }
+
+        // --- 5. 顯示紀錄 (根據選中日期過濾) ---
+        function renderLogs() {
+            const container = document.getElementById('logList');
+            const label = document.getElementById('selectedDateLabel');
+            
+            // 找出選中日期的所有紀錄
+            // 如果沒選日期 (null)，預設顯示所有 (或是顯示今天，這裡設定為顯示選中日期的)
+            if (!selectedDateStr) return;
+
+            label.innerText = `(${selectedDateStr})`;
+            
+            // 篩選符合字串 "[YYYY/MM/DD" 的紀錄
+            // 注意：要保留原始 index 以便刪除
+            const filteredLogs = logs.map((log, index) => ({ log, index }))
+                                     .filter(item => item.log.includes(`[${selectedDateStr}`));
+
+            if (filteredLogs.length === 0) {
+                container.innerHTML = '<div style="text-align:center; color:#666; padding:20px;">這天沒有紀錄喔 😴</div>';
+                return;
+            }
+
+            container.innerHTML = filteredLogs.map(item => {
+                // 解析顯示內容，把日期時間跟內容分開
+                // 格式: [2024/01/01 12:00] 內容...
+                const parts = item.log.match(/\[(.*?)\] (.*)/);
+                const dateTime = parts ? parts[1] : "";
+                const content = parts ? parts[2] : item.log;
+                const timeOnly = dateTime.split(' ')[1] || dateTime; // 只顯示時間
+
+                return `
+                <div class="log-item">
+                    <div>
+                        <span class="log-date">${timeOnly}</span>
+                        <span class="log-info">${content}</span>
+                    </div>
+                    <button class="del-btn" onclick="askDelete(${item.index})">🗑️</button>
+                </div>
+            `}).join('');
+        }
+
+        // --- 6. 刪除邏輯 ---
+        function askDelete(index) {
+            deleteTargetIndex = index;
+            document.getElementById('deleteModal').style.display = 'flex';
+        }
+
+        function confirmDelete() {
+            if (deleteTargetIndex !== null) {
+                logs.splice(deleteTargetIndex, 1);
+                localStorage.setItem('workout_logs', JSON.stringify(logs));
+                // 如果刪光了當天紀錄，這天在月曆上的綠點要消失，所以要全部重繪
+                renderCalendar(); 
+                renderLogs();
+            }
+            closeModal();
+        }
+
+        function closeModal() {
+            document.getElementById('deleteModal').style.display = 'none';
+            deleteTargetIndex = null;
+        }
+
+        function clearAllData() {
+            if (confirm("⚠️ 警告：這會刪除「所有日期」的紀錄，確定嗎？")) {
+                localStorage.removeItem('workout_logs');
+                logs = [];
+                renderCalendar();
+                renderLogs();
+            }
+        }
+    </script>
+</body>
+</html>
