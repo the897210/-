@@ -2,71 +2,91 @@
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-title" content="運動日誌">
-    ​<link rel="manifest" href="manifest.json">
+    <meta name="apple-mobile-web-app-title" content="我的健身App">
 
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#bb86fc">
     <link rel="apple-touch-icon" href="https://r.jina.ai/i/6ef22e43e2f74da386b11028303d85d7">
-    <link rel="icon" href="https://r.jina.ai/i/6ef22e43e2f74da386b11028303d85d7">
+    <link rel="icon" type="image/png" href="https://r.jina.ai/i/6ef22e43e2f74da386b11028303d85d7">
 
     <title>💪 專屬健身 App</title>
     <style>
+        :root {
+            --bg-color: #121212;
+            --card-bg: #1e1e1e;
+            --primary: #03dac6;
+            --secondary: #bb86fc;
+            --text: #ffffff;
+        }
         body { 
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
-            padding: env(safe-area-inset-top) 20px 20px 20px; 
-            background: #121212; 
-            color: white; 
+            font-family: -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
+            padding: env(safe-area-inset-top) 20px 40px 20px; 
+            background: var(--bg-color); 
+            color: var(--text); 
             margin: 0;
-            user-select: none;
+            overflow-x: hidden;
             -webkit-tap-highlight-color: transparent;
         }
-        .card { background: #1e1e1e; padding: 20px; border-radius: 20px; margin-bottom: 20px; border: 1px solid #333; }
-        h2 { text-align: center; color: #bb86fc; margin: 20px 0; }
-        h3 { margin-top: 0; display: flex; align-items: center; gap: 8px; }
+        .card { 
+            background: var(--card-bg); 
+            padding: 20px; 
+            border-radius: 24px; 
+            margin-bottom: 20px; 
+            border: 1px solid #333;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.3);
+        }
+        h2 { text-align: center; color: var(--secondary); margin: 25px 0; font-size: 28px; }
+        h3 { margin-top: 0; font-size: 18px; color: #eee; }
         input { 
-            width: 100%; padding: 15px; margin: 10px 0; 
-            border: none; border-radius: 12px; background: #2c2c2c; 
+            width: 100%; padding: 16px; margin: 10px 0; 
+            border: none; border-radius: 14px; background: #2c2c2c; 
             color: white; font-size: 16px; box-sizing: border-box;
-            outline: none;
+            outline: none; transition: 0.3s;
         }
-        input::placeholder { color: #888; }
+        input:focus { background: #383838; box-shadow: 0 0 0 2px var(--secondary); }
         button { 
-            background: #03dac6; color: #000; border: none; padding: 15px; 
-            border-radius: 12px; width: 100%; font-size: 16px; font-weight: bold; margin-top: 10px;
-            transition: opacity 0.2s;
+            background: var(--primary); color: #000; border: none; padding: 16px; 
+            border-radius: 14px; width: 100%; font-size: 17px; font-weight: bold; margin-top: 12px;
+            box-shadow: 0 4px 10px rgba(3, 218, 198, 0.3);
         }
-        button:active { opacity: 0.7; }
-        .log-item { background: #2c2c2c; padding: 12px; border-radius: 10px; margin-bottom: 8px; font-size: 14px; border-left: 4px solid #bb86fc; }
-        #history { max-height: 250px; overflow-y: auto; margin-top: 10px; }
-        ::-webkit-scrollbar { width: 0px; } /* 隱藏滾動條 */
+        button:active { transform: scale(0.98); opacity: 0.9; }
+        .log-item { 
+            background: #2c2c2c; padding: 14px; border-radius: 12px; 
+            margin-bottom: 10px; font-size: 14px; border-left: 5px solid var(--secondary);
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        #history { max-height: 350px; overflow-y: auto; margin-top: 15px; }
+        ::-webkit-scrollbar { width: 0px; }
+        .delete-btn { color: #ff5252; background: none; box-shadow: none; width: auto; padding: 5px; margin: 0; font-size: 12px; }
     </style>
 </head>
 <body>
     <h2>💪 專屬健身 App</h2>
     
     <div class="card">
-        <h3>🏋️ 重量訓練</h3>
-        <input type="text" id="exercise" placeholder="動作名稱 (如：臥推)">
+        <h3>🏋️ 重量訓練紀錄</h3>
+        <input type="text" id="exercise" placeholder="動作名稱 (如：深蹲)">
         <input type="number" id="weight" placeholder="重量 (kg)">
         <input type="number" id="reps" placeholder="次數">
-        <button onclick="saveData('weight')">儲存紀錄</button>
+        <button onclick="saveData('weight')">儲存本次訓練</button>
     </div>
 
     <div class="card">
-        <h3>🏃 有氧/設定</h3>
-        <input type="text" id="cardio" placeholder="運動類型 (如：跑步)">
+        <h3>🏃 有氧 / 其他設定</h3>
+        <input type="text" id="cardio" placeholder="類型 (如：跑步)">
         <input type="number" id="minutes" placeholder="時間 (分鐘)">
-        <button style="background: #bb86fc;" onclick="saveData('cardio')">儲存有氧</button>
+        <button style="background: var(--secondary);" onclick="saveData('cardio')">儲存有氧紀錄</button>
     </div>
 
-    <div class="card" style="margin-bottom: 50px;">
-        <h3>📅 歷史數據</h3>
+    <div class="card">
+        <h3>📅 訓練歷史紀錄</h3>
         <div id="history"></div>
-        <button style="background:none; color:#ff5252; font-size:12px; margin-top: 20px;" onclick="clearHistory()">清空所有數據</button>
+        <button style="background:none; color:#ff5252; font-size:13px; margin-top: 25px; border: 1px solid #444;" onclick="clearHistory()">清空所有歷史數據</button>
     </div>
 
     <script>
@@ -81,12 +101,12 @@
                 const ex = document.getElementById('exercise').value;
                 const w = document.getElementById('weight').value;
                 const r = document.getElementById('reps').value;
-                if(!ex || !w) return alert("請輸入動作與重量");
+                if(!ex || !w) return alert("請輸入完整內容！");
                 record = `[${timeStr}] ${ex}: ${w}kg x ${r}下`;
             } else {
                 const c = document.getElementById('cardio').value;
                 const m = document.getElementById('minutes').value;
-                if(!c || !m) return alert("請輸入類型與時間");
+                if(!c || !m) return alert("請輸入完整內容！");
                 record = `[${timeStr}] ${c}: ${m}分鐘`;
             }
 
@@ -95,21 +115,25 @@
             localStorage.setItem('workout_logs', JSON.stringify(history));
             
             displayHistory();
-            document.querySelectorAll('input').forEach(i => i.value = ''); // 清空輸入
+            document.querySelectorAll('input').forEach(i => i.value = ''); 
         }
 
         function displayHistory() {
             const history = JSON.parse(localStorage.getItem('workout_logs') || "[]");
             const container = document.getElementById('history');
             if (history.length === 0) {
-                container.innerHTML = '<div style="color:#888; text-align:center;">尚無紀錄</div>';
+                container.innerHTML = '<div style="color:#888; text-align:center; padding: 20px;">目前尚無紀錄</div>';
                 return;
             }
-            container.innerHTML = history.map(item => `<div class="log-item">${item}</div>`).join('');
+            container.innerHTML = history.map((item, index) => `
+                <div class="log-item">
+                    <span>${item}</span>
+                </div>
+            `).join('');
         }
 
         function clearHistory() {
-            if(confirm("確定要刪除所有歷史紀錄嗎？")) {
+            if(confirm("確定要刪除所有紀錄嗎？此動作無法復原。")) {
                 localStorage.removeItem('workout_logs');
                 displayHistory();
             }
